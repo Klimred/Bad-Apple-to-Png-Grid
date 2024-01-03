@@ -8,7 +8,7 @@ from video_splitting import *
 
 # define grid size and the resolution of the end video. I choose 1440*1080 as it is the biggest resolution that I
 # can display in 4:3 on my 1920*1080 screen
-grid = (24, 18)
+grid = (48, 36)
 canvas_size = (1440, 1080)
 
 # sets the size of the smallest possible picture, depending on grid size and canvas size
@@ -83,13 +83,14 @@ def make_frame(n):
 
     dominant_colors = get_dominant_color(image_path)
 
-    # print("doing image: " + str(n))
+    print("doing image: " + str(n))
     canvas = Image.new("RGBA", canvas_size, "white")
 
     for i in range(grid[0]):
         for j in range(grid[1]):
             if dominant_colors[i, j, 1] == 1:
                 size_factor = find_max_size(i, j, dominant_colors)
+                # make so that painted grids can't be painted over again
                 for k in range(size_factor):
                     for l in range(size_factor):
                         dominant_colors[i + k, j + l, 1] = 0
@@ -141,6 +142,7 @@ def make_video():
                                audio_codec="aac")
 
 
+# need to be like that for multiprocessing to work
 if __name__ == "__main__":
     user_input = input("frames or video or all?:\n> ")
 
