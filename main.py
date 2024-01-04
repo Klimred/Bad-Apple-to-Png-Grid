@@ -12,6 +12,8 @@ from video_splitting import *
 # can display in 4:3 on my 1920*1080 screen
 grid = (48, 36)
 canvas_size = (1440, 1080)
+# sets a maximum size for the images, so that only one image doesn't take up the whole screen
+maximum_size = int(grid[1]/4)
 
 # sets the size of the smallest possible picture, depending on grid size and canvas size
 image_size = int(canvas_size[0] / grid[0])
@@ -58,7 +60,7 @@ def find_max_size(i, j, dominant_colors):
     this_pixel = dominant_colors[i, j, 0]
     size = 1
 
-    while size + i < dominant_colors.shape[0] and size + j < dominant_colors.shape[1] and size < grid[1]/4:
+    while size + i < dominant_colors.shape[0] and size + j < dominant_colors.shape[1] and size < maximum_size:
         # Create slices for the horizontal and vertical regions to check
         horizontal_slice = dominant_colors[i:i + size, j + size]
         vertical_slice = dominant_colors[i + size, j:j + size]
