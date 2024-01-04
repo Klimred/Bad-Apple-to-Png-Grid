@@ -1,3 +1,4 @@
+import os
 import concurrent.futures
 import matplotlib.pyplot as plt
 import numpy as np
@@ -5,6 +6,7 @@ from PIL import Image
 from moviepy.editor import VideoFileClip, AudioFileClip
 
 from video_splitting import *
+
 
 # define grid size and the resolution of the end video. I choose 1440*1080 as it is the biggest resolution that I
 # can display in 4:3 on my 1920*1080 screen
@@ -15,8 +17,8 @@ canvas_size = (1440, 1080)
 image_size = int(canvas_size[0] / grid[0])
 
 # open the two images to be used for the video
-pattern1 = Image.open("C:/Users/fedor/PycharmProjects/Bad apple/images/pattern 1.png")
-pattern2 = Image.open("C:/Users/fedor/PycharmProjects/Bad apple/images/pattern 2.png")
+pattern1 = Image.open("./images/pattern 1.png")
+pattern2 = Image.open("./images/pattern 2.png")
 
 
 # a function that receives a frame from Bad Apple and return an array that contains the information whether the dominant
@@ -79,12 +81,12 @@ def find_max_size(i, j, dominant_colors):
 
 
 def make_frame(n):
-    image_path = f"C:/Users/fedor/PycharmProjects/Bad apple/Video with frames/Frames/frame_{n}.jpg"
+    image_path = f"./Video with frames/Frames/frame_{n}.jpg"
 
     dominant_colors = get_dominant_color(image_path)
 
     print("doing image: " + str(n))
-    canvas = Image.new("RGBA", canvas_size, "white")
+    canvas = Image.new("RGB", canvas_size, "white")
 
     for i in range(grid[0]):
         for j in range(grid[1]):
@@ -102,8 +104,8 @@ def make_frame(n):
                     canvas.paste(pattern2.resize((actual_image_size, actual_image_size)),
                                  (image_size * i, image_size * j))
     canvas.save(
-        f"C:/Users/fedor/PycharmProjects/Bad apple/out/done_frames/frame_"
-        f"{str(n).zfill(4)}.png")
+        f"./out/done_frames/frame_"
+        f"{str(n).zfill(4)}.jpg")
     # plt.imshow(dominant_colors.transpose(1, 0, 2)[:, :, 0], cmap="gray")
     # plt.show()
 
@@ -121,11 +123,11 @@ def make_frames_one_after_another():
 
 
 def make_video():
-    out = cv2.VideoWriter('C:/Users/fedor/PycharmProjects/Bad apple/out/soundless Bad Apple.mp4',
+    out = cv2.VideoWriter('./out/soundless Bad Apple.mp4',
                           cv2.VideoWriter_fourcc(*'mp4v'), 30, (1440, 1080))
 
     for n in range(6572):
-        filename = f"C:/Users/fedor/PycharmProjects/Bad apple/out/done_frames/frame_"\
+        filename = f"./out/done_frames/frame_"\
                    f"{str(n).zfill(4)}.png"
         img = cv2.imread(filename)
         out.write(img)
@@ -134,11 +136,11 @@ def make_video():
     out.release()
     print("video done, starting audio")
 
-    video_clip = VideoFileClip("C:/Users/fedor/PycharmProjects/Bad apple/out/soundless Bad Apple.mp4")
-    audio_clip = AudioFileClip("C:/Users/fedor/PycharmProjects/Bad apple/out/audio.mp3")
+    video_clip = VideoFileClip("./out/soundless Bad Apple.mp4")
+    audio_clip = AudioFileClip("./out/audio.mp3")
     video_clip = video_clip.set_audio(audio_clip)
 
-    video_clip.write_videofile("C:/Users/fedor/PycharmProjects/Bad apple/out/Bad Apple.mp4", codec="libx264",
+    video_clip.write_videofile("./out/Bad Apple.mp4", codec="libx264",
                                audio_codec="aac")
 
 
