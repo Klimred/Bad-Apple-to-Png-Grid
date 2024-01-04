@@ -7,13 +7,12 @@ from moviepy.editor import VideoFileClip, AudioFileClip
 
 from video_splitting import *
 
-
 # define grid size and the resolution of the end video. I choose 1440*1080 as it is the biggest resolution that I
 # can display in 4:3 on my 1920*1080 screen
 grid = (48, 36)
 canvas_size = (1440, 1080)
 # sets a maximum size for the images, so that only one image doesn't take up the whole screen
-maximum_size = int(grid[1]/4)
+maximum_size = int(grid[1] / 4)
 
 # sets the size of the smallest possible picture, depending on grid size and canvas size
 image_size = int(canvas_size[0] / grid[0])
@@ -59,7 +58,7 @@ def get_dominant_color(image):
 def find_max_size(i, j, dominant_colors):
     this_pixel = dominant_colors[i, j, 0]
     size = 1
-
+    # checks the max size, till it gets to big or can't get bigger
     while size + i < dominant_colors.shape[0] and size + j < dominant_colors.shape[1] and size < maximum_size:
         # Create slices for the horizontal and vertical regions to check
         horizontal_slice = dominant_colors[i:i + size, j + size]
@@ -85,6 +84,7 @@ def find_max_size(i, j, dominant_colors):
 def make_frame(n):
     image_path = f"./Video with frames/Frames/frame_{n}.jpg"
 
+    # gets the dominant colors
     dominant_colors = get_dominant_color(image_path)
 
     print("doing image: " + str(n))
@@ -112,6 +112,7 @@ def make_frame(n):
     # plt.show()
 
 
+# when called divides the make frame function for every n and does them all parallel
 def make_frames_parallel():
     with concurrent.futures.ProcessPoolExecutor() as executor:
         futures = [executor.submit(make_frame, n) for n in range(6572)]
@@ -119,25 +120,31 @@ def make_frames_parallel():
         concurrent.futures.wait(futures)
 
 
+# should something be wrong, you can do the make_frame() function one after another
 def make_frames_one_after_another():
-    for n in range(100):
+    for n in range(6572):
         make_frame(n)
 
 
+# a function to make videos
 def make_video():
+    # creates a video that will be filled with frames
     out = cv2.VideoWriter('./out/soundless Bad Apple.mp4',
                           cv2.VideoWriter_fourcc(*'mp4v'), 30, (1440, 1080))
 
+    # gets all the done frames and writes them into the video
     for n in range(6572):
-        filename = f"./out/done_frames/frame_"\
+        filename = f"./out/done_frames/frame_" \
                    f"{str(n).zfill(4)}.png"
         img = cv2.imread(filename)
         out.write(img)
         print("writing frame: " + str(n))
 
+    # releases the video
     out.release()
     print("video done, starting audio")
 
+    # puts the audio into the video
     video_clip = VideoFileClip("./out/soundless Bad Apple.mp4")
     audio_clip = AudioFileClip("./out/audio.mp3")
     video_clip = video_clip.set_audio(audio_clip)
