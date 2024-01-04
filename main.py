@@ -56,7 +56,7 @@ def find_max_size(i, j, dominant_colors):
     this_pixel = dominant_colors[i, j, 0]
     size = 1
 
-    while size + i < dominant_colors.shape[0] and size + j < dominant_colors.shape[1]:
+    while size + i < dominant_colors.shape[0] and size + j < dominant_colors.shape[1] and size < grid[1]/4:
         # Create slices for the horizontal and vertical regions to check
         horizontal_slice = dominant_colors[i:i + size, j + size]
         vertical_slice = dominant_colors[i + size, j:j + size]
@@ -142,7 +142,7 @@ def make_video():
                                audio_codec="aac")
 
 
-# need to be like that for multiprocessing to work
+# needs to be like this for multiprocessing to work
 if __name__ == "__main__":
     user_input = input("frames or video or all?:\n> ")
 
