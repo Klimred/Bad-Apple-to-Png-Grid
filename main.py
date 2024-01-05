@@ -131,7 +131,7 @@ def make_frames_one_after_another():
 def make_video():
     # creates a video that will be filled with frames
     out = cv2.VideoWriter('./out/soundless Bad Apple.mp4',
-                          cv2.VideoWriter_fourcc(*'mp4v'), 30, (1440, 1080))
+                          cv2.VideoWriter_fourcc(*'mp4v'), 30, canvas_size)
 
     # gets all the done frames and writes them into the video
     for n in range(6572):
