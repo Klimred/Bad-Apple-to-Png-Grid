@@ -108,7 +108,7 @@ def make_frame(n):
                                  (image_size * i, image_size * j))
     canvas.save(
         f"./out/done_frames/frame_"
-        f"{str(n).zfill(4)}.jpg")
+        f"{str(n).zfill(4)}.png")
     # plt.imshow(dominant_colors.transpose(1, 0, 2)[:, :, 0], cmap="gray")
     # plt.show()
 
@@ -159,9 +159,9 @@ if __name__ == "__main__":
     user_input = input("frames or video or all?:\n> ")
 
     match user_input:
-        case "frames", "f":
+        case "frames" | "f":
             make_frames_parallel()
-        case "video", "v":
+        case "video" | "v":
             make_video()
         case "all":
             make_frames_parallel()
