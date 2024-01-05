@@ -5,7 +5,7 @@ import numpy as np
 from PIL import Image
 from moviepy.editor import VideoFileClip, AudioFileClip
 
-from video_splitting import *
+from setup import *
 
 # define grid size and the resolution of the end video. I choose 1440*1080 as it is the biggest resolution that I
 # can display in 4:3 on my 1920*1080 screen
@@ -33,6 +33,7 @@ def get_dominant_color(image):
     img = img.resize(grid)
 
     # Convert the image to a NumPy array where [y,x,rgb]
+    # noinspection PyTypeChecker
     img_array = np.array(img)
 
     # transpose to [x,y,rgb]
@@ -146,7 +147,7 @@ def make_video():
 
     # puts the audio into the video
     video_clip = VideoFileClip("./out/soundless Bad Apple.mp4")
-    audio_clip = AudioFileClip("./out/audio.mp3")
+    audio_clip = AudioFileClip("./Video with frames/audio.mp3")
     video_clip = video_clip.set_audio(audio_clip)
 
     video_clip.write_videofile("./out/Bad Apple.mp4", codec="libx264",
@@ -157,10 +158,13 @@ def make_video():
 if __name__ == "__main__":
     user_input = input("frames or video or all?:\n> ")
 
-    if user_input in ["frames", "f"]:
-        make_frames_parallel()
-    elif user_input in ["video", "v"]:
-        make_video()
-    elif user_input in ["all"]:
-        make_frames_parallel()
-        make_video()
+    match user_input:
+        case "frames", "f":
+            make_frames_parallel()
+        case "video", "v":
+            make_video()
+        case "all":
+            make_frames_parallel()
+            make_video()
+        case "setup":
+            setup()
