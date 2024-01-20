@@ -9,7 +9,7 @@ from setup import *
 
 # define grid size and the resolution of the end video. I choose 1440*1080 as it is the biggest resolution that I
 # can display in 4:3 on my 1920*1080 screen
-grid = (48, 36)
+grid = (96, 72)
 canvas_size = (1440, 1080)
 # sets a maximum size for the images, so that only one image doesn't take up the whole screen
 maximum_size = int(grid[1] / 4)
