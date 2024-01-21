@@ -2,6 +2,7 @@ import os
 import concurrent.futures
 import matplotlib.pyplot as plt
 import numpy as np
+import time
 from PIL import Image
 from moviepy.editor import VideoFileClip, AudioFileClip
 
@@ -9,7 +10,7 @@ from setup import *
 
 # define grid size and the resolution of the end video. I choose 1440*1080 as it is the biggest resolution that I
 # can display in 4:3 on my 1920*1080 screen
-grid = (96, 72)
+grid = (36, 27)
 canvas_size = (1440, 1080)
 # sets a maximum size for the images, so that only one image doesn't take up the whole screen
 maximum_size = int(grid[1] / 4)
@@ -41,14 +42,11 @@ def get_dominant_color(image):
 
     dominant_colors = np.empty((grid[0], grid[1], 2))
     average_colors = np.empty(grid)
-    for i in range(grid[0]):
-        for j in range(grid[1]):
-            average_colors[i, j] = np.mean(img_array[i, j])
-            if average_colors[i, j] > 128:
-                dominant_colors[i, j, 0] = 1
-            else:
-                dominant_colors[i, j, 0] = 0
-            dominant_colors[i, j, 1] = 1
+    average_colors = np.mean(img_array, axis=2)
+
+    # Determine the dominant color for each grid cell
+    dominant_colors[:, :, 0] = np.where(average_colors > 128, 1, 0)
+    dominant_colors[:, :, 1] = np.full((grid[0], grid[1]), 1)
     return dominant_colors
 
 
@@ -78,7 +76,6 @@ def find_max_size(i, j, dominant_colors):
             break
 
         size += 1
-
     return size
 
 
@@ -90,7 +87,6 @@ def make_frame(n):
 
     print("doing image: " + str(n))
     canvas = Image.new("RGB", canvas_size, "white")
-
     for i in range(grid[0]):
         for j in range(grid[1]):
             if dominant_colors[i, j, 1] == 1:
@@ -108,7 +104,8 @@ def make_frame(n):
                                  (image_size * i, image_size * j))
     canvas.save(
         f"./out/done_frames/frame_"
-        f"{str(n).zfill(4)}.png")
+        f"{str(n).zfill(4)}.jpg")
+
     # plt.imshow(dominant_colors.transpose(1, 0, 2)[:, :, 0], cmap="gray")
     # plt.show()
 
@@ -136,7 +133,7 @@ def make_video():
     # gets all the done frames and writes them into the video
     for n in range(6572):
         filename = f"./out/done_frames/frame_" \
-                   f"{str(n).zfill(4)}.png"
+                   f"{str(n).zfill(4)}.jpg"
         img = cv2.imread(filename)
         out.write(img)
         print("writing frame: " + str(n))
